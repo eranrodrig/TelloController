@@ -1,0 +1,29 @@
+vertical_offset = 0.6
+pid_vertical_const = 1.0
+pid_roll_const = 50.0
+pid_pitch_const = 30.0
+
+TIME_STEP = 1
+GUI_TIME_STEP = 1
+TAKE_OFF_SPEED = 107.8
+
+TAKEOFF_THRESHOLD_VELOCITY = 110.8
+k_vertical_thrust = 110.8
+k_roll_p = 1
+k_pitch_p = 1
+target_altitude = 0.2
+pitch_Kp = 0.0
+pitch_Ki = 0.0
+pitch_Kd = 0
+roll_Kp = 0.0
+roll_Ki = 0.0
+roll_Kd = 0.0
+throttle_Kp = 2
+throttle_Ki = 0
+throttle_Kd = 10
+yaw_Kp = 0.0
+yaw_Ki = 0
+yaw_Kd = 0.0
+yaw_setpoint = 0
+altitude_attainment_factor = 0.8
+waypoint_reached_tolerance = 0.1

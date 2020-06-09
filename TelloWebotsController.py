@@ -42,9 +42,11 @@ class TelloWebotsController:
         self.gps.enable(TIME_STEP)
 
     def _motors_on(self):
-        motors = [self.back_left_motor, self.back_right_motor, self.front_left_motor, self.front_right_motor]
+        motors = [self.back_left_motor, self.front_left_motor, self.front_right_motor, self.back_right_motor]
+        opposite = True
         for motor in motors:
-            motor.setPosition(float('inf'))
+            motor.setPosition(float('inf') if opposite else -float('inf'))
+            opposite = not opposite
             motor.setVelocity(TAKEOFF_THRESHOLD_VELOCITY)
 
     def run(self):
@@ -64,15 +66,17 @@ class TelloWebotsController:
             roll_input = k_roll_p * roll + roll_acceleration + self.rollPID(x_gps)
             pitch_input = k_pitch_p * pitch - pitch_acceleration - self.pitchPID(y_gps)
 
-            front_left_motor_input = k_vertical_thrust + vertical_input - roll_input - pitch_input + yaw_input
-            front_right_motor_input = k_vertical_thrust + vertical_input + roll_input - pitch_input - yaw_input
-            rear_left_motor_input = k_vertical_thrust + vertical_input - roll_input + pitch_input - yaw_input
-            rear_right_motor_input = k_vertical_thrust + vertical_input + roll_input + pitch_input + yaw_input
+            front_left_motor_input = k_vertical_thrust + vertical_input - roll_input - pitch_input - yaw_input
+            front_right_motor_input = k_vertical_thrust + vertical_input + roll_input - pitch_input + yaw_input
+            rear_left_motor_input = k_vertical_thrust + vertical_input - roll_input + pitch_input + yaw_input
+            rear_right_motor_input = k_vertical_thrust + vertical_input + roll_input + pitch_input - yaw_input
 
             self.back_left_motor.setVelocity(rear_left_motor_input)
             self.back_right_motor.setVelocity(rear_right_motor_input)
             self.front_left_motor.setVelocity(front_left_motor_input)
             self.front_right_motor.setVelocity(front_right_motor_input)
+
+            print(self.back_left_motor.getVelocity() - self.back_right_motor.getVelocity(), self.front_right_motor.getVelocity() - self.front_left_motor.getVelocity())
 
     def get_user_input(self):
         key = self.keyboard.getKey()
@@ -100,8 +104,6 @@ class TelloWebotsController:
         elif key == self.keyboard.SHIFT + self.keyboard.LEFT:
             self.target_yaw = self.target_yaw - 0.122
             self.yawPID.setpoint = self.target_yaw
-
-
 
 
 

@@ -61,22 +61,23 @@ class TelloWebotsController:
 
             self.get_user_input()
             vertical_input = self.throttlePID(z_gps)
-            yaw_input = self.yawPID(yaw)
 
+            yaw_input = self.yawPID(yaw)
             roll_input = k_roll_p * roll + roll_acceleration + self.rollPID(x_gps)
             pitch_input = k_pitch_p * pitch - pitch_acceleration - self.pitchPID(y_gps)
 
-            front_left_motor_input = k_vertical_thrust + vertical_input - roll_input - pitch_input - yaw_input
-            front_right_motor_input = k_vertical_thrust + vertical_input + roll_input - pitch_input + yaw_input
-            rear_left_motor_input = k_vertical_thrust + vertical_input - roll_input + pitch_input + yaw_input
-            rear_right_motor_input = k_vertical_thrust + vertical_input + roll_input + pitch_input - yaw_input
+            yaw_input = 0.0
+            front_left_motor_input = k_vertical_thrust + vertical_input - roll_input - pitch_input + yaw_input
+            front_right_motor_input = k_vertical_thrust + vertical_input + roll_input - pitch_input - yaw_input
+            rear_left_motor_input = k_vertical_thrust + vertical_input - roll_input + pitch_input - yaw_input
+            rear_right_motor_input = k_vertical_thrust + vertical_input + roll_input + pitch_input + yaw_input
 
             self.back_left_motor.setVelocity(rear_left_motor_input)
             self.back_right_motor.setVelocity(rear_right_motor_input)
             self.front_left_motor.setVelocity(front_left_motor_input)
             self.front_right_motor.setVelocity(front_right_motor_input)
 
-            print(self.back_left_motor.getVelocity() - self.back_right_motor.getVelocity(), self.front_right_motor.getVelocity() - self.front_left_motor.getVelocity())
+            print(self.back_left_motor.getVelocity(), self.back_right_motor.getVelocity(), self.front_right_motor.getVelocity(), self.front_left_motor.getVelocity())
 
     def get_user_input(self):
         key = self.keyboard.getKey()
@@ -87,10 +88,10 @@ class TelloWebotsController:
             self.target_altitude = self.target_altitude - 0.02
             self.throttlePID.setpoint = self.target_altitude
         elif key == ord('D'):
-            self.targetY = self.targetY + 0.1
+            self.targetY = self.targetY + 0.01
             self.pitchPID.setpoint = self.targetY
         elif key == ord('U'):
-            self.targetY = self.targetY - 0.1
+            self.targetY = self.targetY - 0.01
             self.pitchPID.setpoint = self.targetY
         elif key == self.keyboard.LEFT:
             self.targetX = self.targetX + 0.01

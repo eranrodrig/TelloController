@@ -66,7 +66,7 @@ class TelloWebotsController:
             roll_input = k_roll_p * roll + roll_acceleration + self.rollPID(x_gps)
             pitch_input = k_pitch_p * pitch - pitch_acceleration - self.pitchPID(y_gps)
 
-            yaw_input = 0.0
+            #yaw_input = 0.0
             front_left_motor_input = k_vertical_thrust + vertical_input - roll_input - pitch_input + yaw_input
             front_right_motor_input = k_vertical_thrust + vertical_input + roll_input - pitch_input - yaw_input
             rear_left_motor_input = k_vertical_thrust + vertical_input - roll_input + pitch_input - yaw_input

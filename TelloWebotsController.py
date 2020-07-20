@@ -1,6 +1,5 @@
 """TelloController controller."""
 from controller import *
-import numpy as np
 from simple_pid import PID
 from Constants import *
 from utils import *
@@ -29,9 +28,10 @@ class TelloWebotsController:
         self.throttlePID = PID(throttle_Kp, throttle_Ki, throttle_Kd, setpoint=self.target_altitude)
 
         self.robot.step(TIME_STEP)
-        self.targetX, self.targetY, self.altitude_attained = self.gps.getValues()[2], self.gps.getValues()[0], False
-        self.target_yaw = self.compass.getValues()[1]
-        self.last_yaw = self.target_yaw
+        self.targetX, self.targetY = self.gps.getValues()[2], self.gps.getValues()[0]
+        #self.last_yaw = self.compass.getValues()[1]
+        self.last_yaw = self.imu.getRollPitchYaw()[2] + np.pi
+        self.target_yaw = self.last_yaw
         self.pitchPID = PID(pitch_Kp, pitch_Ki, pitch_Kd, setpoint=self.targetY)
         self.rollPID = PID(roll_Kp, roll_Ki, roll_Kd, setpoint=self.targetX)
         self.yawPID = PID(yaw_Kp, yaw_Ki, yaw_Kd, setpoint=self.target_yaw)
@@ -55,8 +55,8 @@ class TelloWebotsController:
     def run(self):
         while 1:
             self.robot.step(TIME_STEP)
-            roll, pitch, _ = self.imu.getRollPitchYaw()
-            yaw = self.compass.getValues()[1]
+            roll, pitch, yaw = self.imu.getRollPitchYaw()
+            yaw = yaw + np.pi
             roll = roll + np.pi/2
 
             roll_acceleration, pitch_acceleration, _ = self.gyro.getValues()
@@ -82,7 +82,9 @@ class TelloWebotsController:
             self.front_right_motor.setVelocity(front_right_motor_input)
 
             self.last_yaw = yaw
-            print(self.rollPID(x_gps), self.pitchPID(y_gps))
+            #print(self.rollPID(x_gps), self.pitchPID(y_gps))
+            #print(self.gps.getValues())
+            print(yaw, self.last_yaw, yaw_input)
             #print(roll_input, pitch_input, yaw_input)
             #print(self.back_left_motor.getVelocity(), self.back_right_motor.getVelocity(), self.front_right_motor.getVelocity(), self.front_left_motor.getVelocity())
 

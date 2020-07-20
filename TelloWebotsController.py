@@ -93,9 +93,9 @@ class TelloWebotsController:
         elif key == self.keyboard.DOWN:
             self.target_altitude = self.target_altitude - 0.02
         elif key == ord('D'):
-            self.targetY = self.targetY + 0.01
-        elif key == ord('U'):
             self.targetY = self.targetY - 0.01
+        elif key == ord('U'):
+            self.targetY = self.targetY + 0.01
         elif key == self.keyboard.LEFT:
             self.targetX = self.targetX + 0.01
         elif key == self.keyboard.RIGHT:

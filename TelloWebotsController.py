@@ -11,38 +11,35 @@ class TelloWebotsController:
         self.robot = Robot()
         self.robot.keyboard.enable(TIME_STEP)
         self.keyboard = Keyboard()
+        self.instructToLand = False
 
         self.gps = GPS("gps")
         self.imu = InertialUnit("inertial unit")
         self.compass = Compass("compass")
         self.gyro = Gyro("gyro")
+        self.height_sensor = DistanceSensor("distance sensor")
         self._enable_devices()
-        self.primary_yaw = self.compass.getValues()[1]
 
-        self.target_altitude = target_altitude
+        self.target_altitude = takeoff_altitude
         self.back_left_motor = Motor('rear left propeller')
         self.back_right_motor = Motor('rear right propeller')
         self.front_left_motor = Motor('front left propeller')
         self.front_right_motor = Motor('front right propeller')
 
         self.throttlePID = PID(throttle_Kp, throttle_Ki, throttle_Kd, setpoint=self.target_altitude)
-
-        self.robot.step(TIME_STEP)
-        self.targetX, self.targetY = self.gps.getValues()[2], self.gps.getValues()[0]
-        #self.last_yaw = self.compass.getValues()[1]
-        self.last_yaw = self.imu.getRollPitchYaw()[2] + np.pi
+        self.targetX, self.targetY = 0, 0
+        self.last_yaw = 0
         self.target_yaw = self.last_yaw
         self.pitchPID = PID(pitch_Kp, pitch_Ki, pitch_Kd, setpoint=self.targetY)
         self.rollPID = PID(roll_Kp, roll_Ki, roll_Kd, setpoint=self.targetX)
         self.yawPID = PID(yaw_Kp, yaw_Ki, yaw_Kd, setpoint=self.target_yaw)
-
-        self._motors_on()
 
     def _enable_devices(self):
         self.imu.enable(TIME_STEP)
         self.compass.enable(TIME_STEP)
         self.gyro.enable(TIME_STEP)
         self.gps.enable(TIME_STEP)
+        self.height_sensor.enable(TIME_STEP)
 
     def _motors_on(self):
         motors = [self.back_left_motor, self.front_left_motor, self.front_right_motor, self.back_right_motor]
@@ -52,11 +49,24 @@ class TelloWebotsController:
             opposite = not opposite
             motor.setVelocity(TAKEOFF_THRESHOLD_VELOCITY)
 
-    def run(self):
-        while 1:
+    def take_off(self):
+        self.robot.step(TIME_STEP)
+        self.target_altitude = takeoff_altitude
+        self.targetX, self.targetY = self.gps.getValues()[2], self.gps.getValues()[0]
+        self.last_yaw = self.imu.getRollPitchYaw()[2] + np.pi
+        self.target_yaw = self.last_yaw
+        self.pitchPID.setpoint = self.targetY
+        self.rollPID.setpoint = self.targetX
+        self.yawPID.setpoint = self.target_yaw
+        self._motors_on()
+        self._run()
+
+    def _run(self):
+        self.instructToLand = False
+        while not (self.instructToLand and self.height_sensor.getValue() <= min_sensor_height):
             self.robot.step(TIME_STEP)
-            roll, pitch, yaw = self.imu.getRollPitchYaw()
-            yaw = yaw + np.pi
+            roll, pitch, raw_yaw = self.imu.getRollPitchYaw()
+            yaw = self.calc_yaw(raw_yaw + np.pi)
             roll = roll + np.pi/2
 
             roll_acceleration, pitch_acceleration, _ = self.gyro.getValues()
@@ -75,18 +85,30 @@ class TelloWebotsController:
             front_right_motor_input = k_vertical_thrust + vertical_input + roll_input - pitch_input - yaw_input
             rear_left_motor_input = k_vertical_thrust + vertical_input - roll_input + pitch_input - yaw_input
             rear_right_motor_input = k_vertical_thrust + vertical_input + roll_input + pitch_input + yaw_input
-
-            self.back_left_motor.setVelocity(rear_left_motor_input)
-            self.back_right_motor.setVelocity(rear_right_motor_input)
-            self.front_left_motor.setVelocity(front_left_motor_input)
-            self.front_right_motor.setVelocity(front_right_motor_input)
+            self.set_motor_velocities(rear_left_motor_input, rear_right_motor_input, front_left_motor_input, front_right_motor_input)
 
             self.last_yaw = yaw
-            #print(self.rollPID(x_gps), self.pitchPID(y_gps))
-            #print(self.gps.getValues())
-            print(yaw, self.last_yaw, yaw_input)
-            #print(roll_input, pitch_input, yaw_input)
-            #print(self.back_left_motor.getVelocity(), self.back_right_motor.getVelocity(), self.front_right_motor.getVelocity(), self.front_left_motor.getVelocity())
+
+        self.set_motor_velocities(0, 0, 0, 0)
+
+    def set_motor_velocities(self, rear_left_motor_input, rear_right_motor_input, front_left_motor_input, front_right_motor_input):
+        self.back_left_motor.setVelocity(rear_left_motor_input)
+        self.back_right_motor.setVelocity(rear_right_motor_input)
+        self.front_left_motor.setVelocity(front_left_motor_input)
+        self.front_right_motor.setVelocity(front_right_motor_input)
+
+    def calc_yaw(self, raw_yaw):
+        last_yaw = np.abs(self.last_yaw - (self.last_yaw // (2 * np.pi)) * 2 * np.pi)
+        diff = raw_yaw - last_yaw
+        #crossed from 2pi to 0 or 0 to 2pi
+        if np.abs(raw_yaw - last_yaw) >= np.pi:
+            if raw_yaw > last_yaw:
+                diff = -(2*np.pi - raw_yaw + last_yaw)
+            else:
+                diff = 2 * np.pi - last_yaw + raw_yaw
+        print(last_yaw, raw_yaw, self.last_yaw + diff, self.yawPID.setpoint)
+        return self.last_yaw + diff
+
 
     def get_user_input(self):
         key = self.keyboard.getKey()
@@ -98,6 +120,8 @@ class TelloWebotsController:
             self.targetY = self.targetY - 0.01
         elif key == ord('U'):
             self.targetY = self.targetY + 0.01
+        elif key == ord('L'):
+            self.land()
         elif key == self.keyboard.LEFT:
             self.targetX = self.targetX + 0.01
         elif key == self.keyboard.RIGHT:
@@ -114,6 +138,10 @@ class TelloWebotsController:
         self.rollPID.setpoint = self.targetX
         self.yawPID.setpoint = self.target_yaw
 
+    def land(self):
+        z_gps = self.gps.getValues()[1]
+        self.target_altitude = z_gps + min_landing_height - self.height_sensor.getValue()
+        self.instructToLand = True
 
 
-TelloWebotsController().run()
+TelloWebotsController().take_off()

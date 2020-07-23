@@ -6,16 +6,56 @@ from kivy.uix.image import Image
 from kivy.uix.floatlayout import FloatLayout
 from kivy.graphics.texture import Texture
 from kivy.clock import Clock
-from TelloWebotsController import TelloWebotsController
 import numpy as np
 
-
-# tello = TelloWebotsController()
 tello = None
 
+
 class JoystickDemo(FloatLayout):
-    def btn(self):
+    left_joystick = ObjectProperty(None)
+    right_joystick = ObjectProperty(None)
+
+    def takeoff(self):
         tello.take_off()
+
+    def land(self):
+        tello.land()
+
+    def bind_joysticks(self):
+        self._get_joystick(self.left_joystick).bind(pad=self._left_joystick_control)
+        self._get_joystick(self.right_joystick).bind(pad=self._right_joystick_control)
+
+    def _left_joystick_control(self, instance, pad):
+        angle = instance.angle
+        if instance.magnitude > 0.9:
+            if angle > 315 or angle < 45:
+                tello.cw()
+            elif 45 < angle < 135:
+                tello.up()
+            elif 135 < angle < 225:
+                tello.ccw()
+            else:
+                tello.down()
+
+    def _get_joystick(self, parent):
+        if isinstance(parent, Joystick):
+            return parent
+        elif hasattr(parent, 'children'):
+            for child in parent.children:
+                if isinstance(child, Joystick):
+                    return child
+
+    def _right_joystick_control(self, instance, pad):
+        angle = instance.angle
+        if instance.magnitude > 0.9:
+            if angle > 315 or angle < 45:
+                tello.right()
+            elif 45 < angle < 135:
+                tello.forward()
+            elif 135 < angle < 225:
+                tello.left()
+            else:
+                tello.backward()
 
 
 class Video1(Image):
@@ -36,23 +76,10 @@ class Video1(Image):
 
 
 class JoystickDemoApp(App):
+
     def build(self):
         self.root = JoystickDemo()
-        self._bind_joysticks()
-
-    def _bind_joysticks(self):
-        joysticks = self._get_joysticks(self.root)
-        for joystick in joysticks:
-            joystick.bind(pad=self._update_pad_display)
-
-    def _get_joysticks(self, parent):
-        joysticks = []
-        if isinstance(parent, Joystick):
-            joysticks.append(parent)
-        elif hasattr(parent, 'children'):
-            for child in parent.children:
-                joysticks.extend(self._get_joysticks(child))
-        return joysticks
+        self.root.bind_joysticks()
 
     def _update_pad_display(self, instance, pad):
         return
@@ -70,3 +97,13 @@ def run_kv(proxy_tello):
     global tello
     tello = proxy_tello
     JoystickDemoApp().run()
+
+
+def get_joysticks(parent):
+    joysticks = []
+    if isinstance(parent, Joystick):
+        joysticks.append(parent)
+    elif hasattr(parent, 'children'):
+        for child in parent.children:
+            joysticks.extend(get_joysticks(child))
+    return joysticks

@@ -24,9 +24,13 @@
 
 <ButtonGroup_Grid@BoxLayout>:
   orientation: 'horizontal'
-  size_hint: (1, 0.1)
+  size_hint: (1, 0.2)
 
 <StickGroup_Inner@BoxLayout>:
+  orientation: 'horizontal'
+  padding:     10
+
+<Video_Box@BoxLayout>:
   orientation: 'horizontal'
   padding:     10
 
@@ -87,11 +91,13 @@
 ########################################################################################################################################################################################################################################################################################################~}#
 
 <JoystickDemo>:
+  right_joystick: right_joystick
+  left_joystick: left_joystick
 
   GridLayout:
     size: root.size
     cols: 1
-    rows: 5
+    rows: 4
 
     canvas.before:
       Color:
@@ -108,12 +114,12 @@
       text: 'Tello Controller'
       ButtonGroup_Grid:
         Button:
-          size_hint: (0.06, 1)
+          size_hint: (0.1, 1)
           background_down:'assets/takeoff.png'
           background_normal:'assets/takeoff.png'
-          on_press: root.btn()
+          on_press: root.takeoff()
         Button:
-          size_hint: (0.06, 1)
+          size_hint: (0.1, 1)
           background_down:'assets/land.png'
           background_normal:'assets/land.png'
         Label:
@@ -125,12 +131,18 @@
             Rectangle:
               pos: self.pos
               size: self.size
-      Video1:
-        fps:24
+      Video_Box:
+        Video1:
+          fps:24
+          allow_stretch: True
+          keep_ratio: False
+
+
       StickGroup_Inner:
+        size_hint: (1, 0.5)
         DemoStick:
+          id: left_joystick
           text: 'Up, Down, Cc, Ccw'
-          size_hint: (1, 0.4)
           outer_size: 0.5
           inner_size: 0.25
           pad_size:   0.51
@@ -145,8 +157,8 @@
           pad_line_color:         (0.4,  0.4,  0.4,  1)
 
         DemoStick:
+          id: right_joystick
           text: 'Left, Right, Forward, Backward'
-          size_hint: (1, 0.4)
           outer_size: 0.5
           inner_size: 0.25
           pad_size:   0.51

@@ -2,6 +2,7 @@
 from controller import *
 from simple_pid import PID
 from Constants import *
+import threading
 from utils import *
 
 
@@ -34,6 +35,7 @@ class TelloWebotsController:
         self.pitchPID = PID(pitch_Kp, pitch_Ki, pitch_Kd, setpoint=self.targetY)
         self.rollPID = PID(roll_Kp, roll_Ki, roll_Kd, setpoint=self.targetX)
         self.yawPID = PID(yaw_Kp, yaw_Ki, yaw_Kd, setpoint=self.target_yaw)
+        self.robot.step(TIME_STEP)
 
     def _enable_devices(self):
         self.imu.enable(TIME_STEP)
@@ -61,7 +63,9 @@ class TelloWebotsController:
         self.rollPID.setpoint = self.targetX
         self.yawPID.setpoint = self.target_yaw
         self._motors_on()
-        self._run()
+        thread = threading.Thread(target=self._run, daemon=False)
+        thread.start()
+
 
     def _run(self):
         self.instructToLand = False
@@ -172,6 +176,6 @@ class TelloWebotsController:
         self.target_yaw = self.target_yaw + rotation_epsilon
 
 
-controller = TelloWebotsController()
-controller.take_off()
+# controller = TelloWebotsController()
+# controller.take_off()
 

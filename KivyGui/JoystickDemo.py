@@ -29,11 +29,11 @@ class JoystickDemo(FloatLayout):
         angle = instance.angle
         if instance.magnitude > 0.9:
             if angle > 315 or angle < 45:
-                tello.cw()
+                tello.ccw()
             elif 45 < angle < 135:
                 tello.up()
             elif 135 < angle < 225:
-                tello.ccw()
+                tello.cw()
             else:
                 tello.down()
 
@@ -49,24 +49,25 @@ class JoystickDemo(FloatLayout):
         angle = instance.angle
         if instance.magnitude > 0.9:
             if angle > 315 or angle < 45:
-                tello.right()
+                tello.left()
             elif 45 < angle < 135:
                 tello.forward()
             elif 135 < angle < 225:
-                tello.left()
+                tello.right()
             else:
                 tello.backward()
 
 
 class Video1(Image):
-    fps = ObjectProperty(24)
+    fps = ObjectProperty(60)
 
     def __init__(self, **kwargs):
         Image.__init__(self, **kwargs)
         Clock.schedule_interval(self.update, 1.0 / self.fps)
 
     def update(self, dt):
-        frame = np.rot90(tello.take_picture(), k=2)
+        #frame = np.rot90(tello.take_picture(), k=2)
+        frame = tello.take_picture()
         img = cv2.cvtColor(frame.astype(np.uint8), cv2.COLOR_BGR2RGB)
         image_texture = Texture.create(
             size=(img.shape[1], img.shape[0]), colorfmt='bgr')

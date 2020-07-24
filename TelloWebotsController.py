@@ -116,7 +116,7 @@ class TelloWebotsController:
 
     def take_picture(self):
         image = self.camera.getImageArray()
-        return np.rot90(np.array(image), k=3)
+        return np.rot90(np.array(image), k=1)
 
     def get_user_input(self):
         key = self.keyboard.getKey()
@@ -158,10 +158,10 @@ class TelloWebotsController:
         self.target_altitude = self.target_altitude - z_epsilon
 
     def left(self):
-        self.targetX = self.targetX + x_epsilon
+        self.targetX = self.targetX - x_epsilon
 
     def right(self):
-        self.targetX = self.targetX - x_epsilon
+        self.targetX = self.targetX + x_epsilon
 
     def forward(self):
         self.targetY = self.targetY - y_epsilon
@@ -170,10 +170,10 @@ class TelloWebotsController:
         self.targetY = self.targetY + y_epsilon
 
     def cw(self):
-        self.target_yaw = self.target_yaw - rotation_epsilon
+        self.target_yaw = self.target_yaw + rotation_epsilon
 
     def ccw(self):
-        self.target_yaw = self.target_yaw + rotation_epsilon
+        self.target_yaw = self.target_yaw - rotation_epsilon
 
 
 # controller = TelloWebotsController()

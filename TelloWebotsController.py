@@ -115,8 +115,11 @@ class TelloWebotsController:
         return self.last_yaw + diff
 
     def take_picture(self):
-        image = self.camera.getImageArray()
-        return np.rot90(np.array(image), k=1)
+        try:
+            image = self.camera.getImageArray()
+            return np.rot90(np.array(image), k=1)
+        except:
+            return np.zeros([64, 64], np.uint8)
 
     def get_user_input(self):
         key = self.keyboard.getKey()

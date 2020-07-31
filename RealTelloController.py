@@ -13,6 +13,16 @@ class RealTelloController:
         self.video_thread = threading.Thread(target=self._start_stream, daemon=True)
         self.video_thread.start()
 
+    def at_exit(self):
+        self.drone.land()
+        self.drone.socket.close()
+
+    def take_off(self):
+        self.drone.takeoff()
+
+    def land(self):
+        self.drone.land()
+
     def take_picture(self):
         return self.frame
 
@@ -23,22 +33,22 @@ class RealTelloController:
         self.drone.ccw(rotation_epsilon * 180)
 
     def left(self):
-        self.drone.left(x_epsilon * 100)
+        self.drone.left(x_epsilon * 10000)
 
     def right(self):
-        self.drone.right(x_epsilon * 100)
+        self.drone.right(x_epsilon * 10000)
 
     def up(self):
-        self.drone.up(z_epsilon * 100)
+        self.drone.up(z_epsilon * 10000)
 
     def down(self):
-        self.drone.down(z_epsilon * 100)
+        self.drone.down(z_epsilon * 10000)
 
     def forward(self):
-        self.drone.forward(y_epsilon * 100)
+        self.drone.forward(y_epsilon * 10000)
 
     def backward(self):
-        self.drone.back(y_epsilon * 100)
+        self.drone.back(y_epsilon * 10000)
 
     def _stop_stream(self):
         self.stream = False
@@ -49,9 +59,7 @@ class RealTelloController:
         self.stream = True
         while self.stream:
             ret, frame = cap.read()
-            self.frame = frame
+            self.frame = np.rot90(frame, k=2)
         cap.release()
         self.drone.send_command('streamoff')
 
-
-RealTelloController()

@@ -1,4 +1,3 @@
-"""TelloController controller."""
 from controller import *
 from simple_pid import PID
 from Constants import *
@@ -9,7 +8,7 @@ from utils import *
 class TelloWebotsController:
 
     def __init__(self):
-        self.robot = Robot()
+        self.robot = Supervisor()
         self.robot.keyboard.enable(TIME_STEP)
         self.keyboard = Keyboard()
         self.instructToLand = False
@@ -37,6 +36,10 @@ class TelloWebotsController:
         self.yawPID = PID(yaw_Kp, yaw_Ki, yaw_Kd, setpoint=self.target_yaw)
         self.robot.step(TIME_STEP)
 
+    def at_exit(self):
+        self.robot.worldReload()
+        print('now')
+
     def _enable_devices(self):
         self.imu.enable(TIME_STEP)
         self.compass.enable(TIME_STEP)
@@ -55,15 +58,15 @@ class TelloWebotsController:
 
     def take_off(self):
         self.robot.step(TIME_STEP)
-        self.target_altitude = takeoff_altitude
-        self.targetX, self.targetY = self.gps.getValues()[2], self.gps.getValues()[0]
+        self.target_altitude = self.gps.getValues()[1] + takeoff_altitude
         self.last_yaw = self.imu.getRollPitchYaw()[2] + np.pi
         self.target_yaw = self.last_yaw
+        self.targetX, self.targetY = normalize_coordinates(self.gps.getValues()[2], self.gps.getValues()[0], self.target_yaw)
         self.pitchPID.setpoint = self.targetY
         self.rollPID.setpoint = self.targetX
         self.yawPID.setpoint = self.target_yaw
         self._motors_on()
-        thread = threading.Thread(target=self._run, daemon=False)
+        thread = threading.Thread(target=self._run, daemon=True)
         thread.start()
 
 
@@ -118,7 +121,7 @@ class TelloWebotsController:
         try:
             image = self.camera.getImageArray()
             return np.rot90(np.array(image), k=1)
-        except:
+        except Exception as e:
             return np.zeros([64, 64], np.uint8)
 
     def get_user_input(self):

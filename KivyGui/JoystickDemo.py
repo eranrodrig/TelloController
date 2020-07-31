@@ -82,29 +82,8 @@ class JoystickDemoApp(App):
         self.root = JoystickDemo()
         self.root.bind_joysticks()
 
-    def _update_pad_display(self, instance, pad):
-        return
-    #     x, y = pad
-    #     x, y = (str(x)[0:5], str(y)[0:5])
-    #     x, y = (('x: ' + x), ('\ny: ' + y))
-    #     r = "radians: " + str(instance.radians)[0:5]
-    #     m = "\nmagnitude: " + str(instance.magnitude)[0:5]
-    #     a = "\nangle: " + str(instance.angle)[0:5]
-    #     self.root.ids.pad_display_xy.text = "".join([x, y])
-    #     self.root.ids.pad_display_rma.text = "".join([r, m, a])
-
-
 def run_kv(proxy_tello):
     global tello
     tello = proxy_tello
     JoystickDemoApp().run()
 
-
-def get_joysticks(parent):
-    joysticks = []
-    if isinstance(parent, Joystick):
-        joysticks.append(parent)
-    elif hasattr(parent, 'children'):
-        for child in parent.children:
-            joysticks.extend(get_joysticks(child))
-    return joysticks

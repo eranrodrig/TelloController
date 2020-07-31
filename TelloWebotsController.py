@@ -38,7 +38,6 @@ class TelloWebotsController:
 
     def at_exit(self):
         self.robot.worldReload()
-        print('now')
 
     def _enable_devices(self):
         self.imu.enable(TIME_STEP)
@@ -68,7 +67,6 @@ class TelloWebotsController:
         self._motors_on()
         thread = threading.Thread(target=self._run, daemon=True)
         thread.start()
-
 
     def _run(self):
         self.instructToLand = False
@@ -122,7 +120,7 @@ class TelloWebotsController:
             image = self.camera.getImageArray()
             return np.rot90(np.array(image), k=1)
         except Exception as e:
-            return np.zeros([64, 64], np.uint8)
+            return np.zeros([default_frame_size, default_frame_size], np.uint8)
 
     def get_user_input(self):
         key = self.keyboard.getKey()

@@ -8,7 +8,7 @@ import numpy as np
 class RealTelloController:
 
     def __init__(self):
-        self.frame = np.zeros([64, 64], np.uint8)
+        self.frame = np.zeros([default_frame_size, default_frame_size], np.uint8)
         self.drone = tello.Tello(debug=False)
         self.video_thread = threading.Thread(target=self._start_stream, daemon=True)
         self.video_thread.start()
@@ -33,22 +33,22 @@ class RealTelloController:
         self.drone.ccw(rotation_epsilon * 180)
 
     def left(self):
-        self.drone.left(x_epsilon * 10000)
+        self.drone.left(real_tello_epsilon)
 
     def right(self):
-        self.drone.right(x_epsilon * 10000)
+        self.drone.right(real_tello_epsilon)
 
     def up(self):
-        self.drone.up(z_epsilon * 10000)
+        self.drone.up(real_tello_epsilon)
 
     def down(self):
-        self.drone.down(z_epsilon * 10000)
+        self.drone.down(real_tello_epsilon)
 
     def forward(self):
-        self.drone.forward(y_epsilon * 10000)
+        self.drone.forward(real_tello_epsilon)
 
     def backward(self):
-        self.drone.back(y_epsilon * 10000)
+        self.drone.back(real_tello_epsilon)
 
     def _stop_stream(self):
         self.stream = False

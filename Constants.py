@@ -29,8 +29,10 @@ altitude_attainment_factor = 0.8
 waypoint_reached_tolerance = 0.1
 min_landing_height = -0.03
 min_sensor_height = 0.008
-z_epsilon = 0.02
+z_epsilon = 0.01
 y_epsilon = 0.01
 x_epsilon = 0.01
-rotation_epsilon = 0.122
+rotation_epsilon = 0.05
+real_tello_epsilon = 20
+default_frame_size = 64
 

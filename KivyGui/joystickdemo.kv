@@ -1,0 +1,174 @@
+#: import Joystick garden.joystick
+
+########################################################################################################################################################################################################################################################################################################~{#
+#//////|   StickGroup Template   |//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////g2#
+########################################################################################################################################################################################################################################################################################################~}#
+
+<StickGroup_Outer@BoxLayout>:
+  orientation: 'vertical'
+  text: ''
+
+  Label:
+    size_hint: (1, 0.2)
+    text:      root.text
+    font_size: min(*self.size) * 0.3
+    bold:      True
+    color:     (0.95, 0.95, 0.95, 1)
+
+    canvas.before:
+      Color:
+        rgba: (0.05, 0.05, 0.05, 1) if(root.text) else (0.85, 0.85, 0.85, 1)
+      Rectangle:
+        pos:  self.pos
+        size: self.size
+
+<ButtonGroup_Grid@BoxLayout>:
+  orientation: 'horizontal'
+  size_hint: (1, 0.2)
+
+<StickGroup_Inner@BoxLayout>:
+  orientation: 'horizontal'
+  padding:     10
+
+<Video_Box@BoxLayout>:
+  orientation: 'horizontal'
+  padding:     10
+
+<StickGroup_Label@Label>:
+  color: (0.6, 0.6, 0.6, 1)
+
+
+########################################################################################################################################################################################################################################################################################################~{#
+#//////|   DemoStick Template   |///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////g2#
+########################################################################################################################################################################################################################################################################################################~}#
+
+<DemoStick@BoxLayout>:
+  orientation: 'vertical'
+
+  text:   ''
+  sticky: False
+  outer_size: 0.9
+  inner_size: 0.73
+  pad_size:   0.68
+  outer_line_width: 0.01
+  inner_line_width: 0.01
+  pad_line_width:   0.01
+  outer_background_color: (0.75, 0.75, 0.75, 1)
+  outer_line_color:       (0.25, 0.25, 0.25, 1)
+  inner_background_color: (0.75, 0.75, 0.75, 1)
+  inner_line_color:       (0.7,  0.7,  0.7,  1)
+  pad_background_color:   (0.4,  0.4,  0.4,  1)
+  pad_line_color:         (0.35, 0.35, 0.35, 1)
+
+  Joystick:
+    size_hint: (1, 0.7)
+    sticky: root.sticky
+    outer_size: root.outer_size
+    inner_size: root.inner_size
+    pad_size:   root.pad_size
+    outer_line_width:       root.outer_line_width
+    inner_line_width:       root.inner_line_width
+    pad_line_width:         root.pad_line_width
+    outer_background_color: root.outer_background_color
+    outer_line_color:       root.outer_line_color
+    inner_background_color: root.inner_background_color
+    inner_line_color:       root.inner_line_color
+    pad_background_color:   root.pad_background_color
+    pad_line_color:         root.pad_line_color
+
+  Label:
+    size_hint: (1, 0.1)
+
+  Label:
+    size_hint: (1, 0.2)
+    text:      root.text
+    font_size: min(*self.size) * 0.5
+    color:     (0.6, 0.6, 0.6, 1)
+
+
+########################################################################################################################################################################################################################################################################################################~{#
+#//////|   Joystick_Demo   |////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////g2#
+########################################################################################################################################################################################################################################################################################################~}#
+
+<JoystickDemo>:
+  right_joystick: right_joystick
+  left_joystick: left_joystick
+
+  GridLayout:
+    size: root.size
+    cols: 1
+    rows: 4
+
+    canvas.before:
+      Color:
+        rgba: (0.85, 0.85, 0.85, 1)
+      Rectangle:
+        pos:  self.pos
+        size: self.size
+
+  #####################################################################################################################################################################################################################################################################################################~>{#
+  #//////|   >   Options   |////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////g2#
+  #####################################################################################################################################################################################################################################################################################################~>}#
+
+    StickGroup_Outer:
+      text: 'Tello Simulator'
+      ButtonGroup_Grid:
+        Button:
+          size_hint: (0.1, 1)
+          background_down:'assets/takeoff.png'
+          background_normal:'assets/takeoff.png'
+          on_press: root.takeoff()
+        Button:
+          size_hint: (0.1, 1)
+          background_down:'assets/land.png'
+          background_normal:'assets/land.png'
+          on_press: root.land()
+        Label:
+          text:''
+          color: (0,0,0,1)
+          canvas.before:
+            Color:
+              rgba: 0, 0, 0, 1
+            Rectangle:
+              pos: self.pos
+              size: self.size
+      Video_Box:
+        Video1:
+          fps:60
+          allow_stretch: True
+          keep_ratio: False
+
+
+      StickGroup_Inner:
+        size_hint: (1, 0.5)
+        DemoStick:
+          id: left_joystick
+          text: 'Up, Down, Cc, Ccw'
+          outer_size: 0.5
+          inner_size: 0.25
+          pad_size:   0.51
+          outer_line_width: 0.01
+          inner_line_width: 0.01
+          pad_line_width:   0.01
+          outer_background_color: (0.75, 0.75, 0.75, 1)
+          outer_line_color:       (0.25, 0.25, 0.25, 1)
+          inner_background_color: (0.5,  0.5,  0.5,  1)
+          inner_line_color:       (0.7,  0.7,  0.7,  1)
+          pad_background_color:   (0.3,  0.3,  0.3,  1)
+          pad_line_color:         (0.4,  0.4,  0.4,  1)
+
+        DemoStick:
+          id: right_joystick
+          text: 'Left, Right, Forward, Backward'
+          outer_size: 0.5
+          inner_size: 0.25
+          pad_size:   0.51
+          outer_line_width: 0.01
+          inner_line_width: 0.01
+          pad_line_width:   0.01
+          outer_background_color: (0.75, 0.75, 0.75, 1)
+          outer_line_color:       (0.25, 0.25, 0.25, 1)
+          inner_background_color: (0.5,  0.5,  0.5,  1)
+          inner_line_color:       (0.7,  0.7,  0.7,  1)
+          pad_background_color:   (0.3,  0.3,  0.3,  1)
+          pad_line_color:         (0.4,  0.4,  0.4,  1)

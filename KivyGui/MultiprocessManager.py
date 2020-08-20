@@ -1,9 +1,8 @@
-import atexit
 import multiprocessing
 from multiprocessing.managers import BaseManager
 
-from RealTelloController import RealTelloController
-from TelloWebotsController import TelloWebotsController
+from Controllers.RealTelloController import RealTelloController
+from Controllers.TelloWebotsController import TelloWebotsController
 from KivyGui.JoystickDemo import run_kv
 
 

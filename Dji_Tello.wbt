@@ -2308,4 +2308,5 @@ DEF BEST_TELLO Robot {
     ]
   }
   controller "<extern>"
+  supervisor TRUE
 }

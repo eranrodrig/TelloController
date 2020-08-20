@@ -3,7 +3,7 @@ import os
 os.environ["KIVY_NO_CONSOLELOG"] = "1"
 import cv2
 from kivy.app import App
-from garden.joystick import Joystick
+from kivy.garden.joystick import Joystick
 from kivy.properties import ObjectProperty
 from kivy.uix.image import Image
 from kivy.uix.floatlayout import FloatLayout

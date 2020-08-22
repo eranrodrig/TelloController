@@ -108,42 +108,18 @@
   #####################################################################################################################################################################################################################################################################################################~>}#
 
     Page_Outline:
-      text: 'Tello Simulator'
       ButtonGroup_Grid:
-        Button:
-          size_hint: (0.1, 1)
-          background_down:'assets/takeoff.png'
-          background_normal:'assets/takeoff.png'
-          on_press: root.takeoff()
-        Button:
-          size_hint: (0.1, 1)
-          background_down:'assets/land.png'
-          background_normal:'assets/land.png'
-          on_press: root.land()
-        Label:
-          text:''
-          color: (0,0,0,1)
-          canvas.before:
-            Color:
-              rgba: 0, 0, 0, 1
-            Rectangle:
-              pos: self.pos
-              size: self.size
+
 
       Video_Box:
         VideoScreen:
-          fps:60
-          allow_stretch: True
-          keep_ratio: False
           source: 'assets/blackScreen.png'
 
 
       StickGroup_Inner:
-        size_hint: (1, 0.5)
         DemoStick:
           id: left_joystick
-          text: 'Up, Down, Cc, Ccw'
 
         DemoStick:
           id: right_joystick
-          text: 'Left, Right, Forward, Backward'
+

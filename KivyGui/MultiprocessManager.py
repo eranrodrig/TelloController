@@ -3,7 +3,7 @@ from multiprocessing.managers import BaseManager
 
 from Controllers.RealTelloController import RealTelloController
 from Controllers.TelloWebotsController import TelloWebotsController
-from KivyGui.JoystickDemo import run_kv
+from KivyGui.FlightSimulator import run_kv
 
 
 class MyManager(BaseManager):
@@ -21,16 +21,20 @@ MyManager.register('RealTelloController', RealTelloController)
 
 
 def main():
-    manager = Manager()
-    controller = manager.TelloWebotsController()
-    pool = multiprocessing.Pool(1)
-    pool.apply(func=run_kv, args=(controller,))
-    pool.close()
-    pool.join()
     try:
+        manager = Manager()
+        controller = manager.TelloWebotsController()
+        pool = multiprocessing.Pool(1)
+        pool.apply(func=run_kv, args=(controller,))
+        pool.close()
+        pool.join()
         controller.at_exit()
     except EOFError:
         pass
+    except Exception:
+        controller.at_exit()
+    finally:
+        manager.shutdown()
 
 
 if __name__ == '__main__':

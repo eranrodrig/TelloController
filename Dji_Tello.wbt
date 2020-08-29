@@ -3,16 +3,89 @@ WorldInfo {
   basicTimeStep 16
 }
 Viewpoint {
-  orientation 0.22978910074735825 0.8803757887820682 0.41489208199732097 4.048947226952657
-  position -0.14495308912113788 0.24656586209356463 -0.1009303830528621
+  orientation 0.996223003113297 0.06291485283017714 0.05984521168214888 4.758609213412123
+  position 0.022409155667620417 4.484173872727052 0.14466351229371766
   followType "Mounted Shot"
+}
+WoodenBox {
+  translation -0.8 0.1 -0.8
+  size 0.2 0.2 0.2
+}
+WoodenBox {
+  translation 0.8 0.1 -0.8
+  name "wooden box(3)"
+  size 0.2 0.2 0.2
+}
+WoodenBox {
+  translation 0.8 0.1 0.8
+  name "wooden box(2)"
+  size 0.2 0.2 0.2
+}
+WoodenBox {
+  translation -0.8 0.1 0.8
+  name "wooden box(1)"
+  size 0.2 0.2 0.2
+}
+OilBarrel {
+  translation 0 0.15 1
+  name "oil barrel(2)"
+  height 0.3
+  radius 0.15
+}
+OilBarrel {
+  translation 0 0.15 -1
+  name "oil barrel(3)"
+  height 0.3
+  radius 0.15
+}
+OilBarrel {
+  translation 1 0.15 0
+  height 0.3
+  radius 0.15
+}
+OilBarrel {
+  translation -1 0.15 0
+  name "oil barrel(1)"
+  height 0.3
+  radius 0.15
 }
 TexturedBackground {
 }
 TexturedBackgroundLight {
 }
 Floor {
-  size 1 1
+}
+Can {
+  translation 0.03 0.06 0.55
+}
+Can {
+  translation 0.11 0.06 0.55
+  name "can(4)"
+}
+Can {
+  translation 0.07 0.06 0.62
+  name "can(5)"
+}
+Can {
+  translation 0 0.06 0.48
+  name "can(3)"
+}
+Can {
+  translation 0.14 0.06 0.48
+  name "can(1)"
+}
+Can {
+  translation 0.07 0.06 0.48
+  name "can(2)"
+}
+PaperBoat {
+  translation 1 0.29 0
+  scale 0.5
+}
+PaperBoat {
+  translation -1 0.29 0
+  name "paper boat(1)"
+  scale 0.5
 }
 DEF BEST_TELLO Robot {
   translation -0.0401168 0.01 -0.040818
@@ -2309,4 +2382,11 @@ DEF BEST_TELLO Robot {
   }
   controller "<extern>"
   supervisor TRUE
+}
+RubberDuck {
+  translation 0 0.32 1
+}
+RubberDuck {
+  translation 0 0.32 -1
+  name "rubber duck(1)"
 }

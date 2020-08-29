@@ -23,7 +23,7 @@ MyManager.register('RealTelloController', RealTelloController)
 def main():
     try:
         manager = Manager()
-        controller = manager.TelloWebotsController()
+        controller = manager.RealTelloController()
         pool = multiprocessing.Pool(1)
         pool.apply(func=run_kv, args=(controller,))
         pool.close()
@@ -31,7 +31,8 @@ def main():
         controller.at_exit()
     except EOFError:
         pass
-    except Exception:
+    except Exception as e:
+        print(e)
         controller.at_exit()
     finally:
         manager.shutdown()

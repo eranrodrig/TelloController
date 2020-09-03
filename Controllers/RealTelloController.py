@@ -62,7 +62,6 @@ class RealTelloController:
     def backward(self):
         thread = threading.Thread(target=self.drone.back, args=(real_tello_epsilon,), daemon=True)
         thread.start()
-        self.drone.back(real_tello_epsilon)
 
     def _stop_stream(self):
         self.stream = False

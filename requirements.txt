@@ -22,4 +22,4 @@ pywin32==228
 requests==2.24.0
 simple-pid==0.2.4
 six==1.15.0
-urllib3==1.25.9
+urllib3==1.26.5

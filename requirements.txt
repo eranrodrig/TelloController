@@ -10,7 +10,7 @@ kivy-deps.sdl2==0.2.0
 Kivy-Garden==0.1.4
 kiwisolver==1.2.0
 matplotlib==3.3.0
-numpy==1.18.4
+numpy==1.22.0
 opencv-python==4.3.0.36
 Pillow==7.2.0
 pygame==1.9.6
